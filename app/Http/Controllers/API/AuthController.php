@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\API\BaseController as BaseController;
 use App\Http\Requests\UserRequest;
 use App\Models\User;
+use Illuminate\Http\JsonResponse;
 use Validator;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
@@ -38,7 +39,7 @@ class AuthController extends BaseController
      *     )
      * )
      */
-    public function register(UserRequest $request)
+    public function register(UserRequest $request) : JsonResponse
     {
         $input = $request->all();
         if (!isset($input['password'])) {
@@ -75,7 +76,7 @@ class AuthController extends BaseController
      *     )
      * )
      */
-    public function login()
+    public function login() : JsonResponse
     {
         $credentials = request(['email', 'password']);
 
@@ -83,7 +84,7 @@ class AuthController extends BaseController
             return $this->sendError('Unauthorised.', ['error' => 'Unauthorised']);
         }
 
-        $success = $this->respondWithToken($token);
+        $success = $this->respondWithToken((string)$token);
 
         return $this->sendResponse($success, 'User login successfully.');
     }
@@ -105,9 +106,14 @@ class AuthController extends BaseController
      *     )
      * )
      */
-    public function profile()
+    public function profile() : JsonResponse
     {
         $user = auth()->user();
+
+        if (!$user) {
+            return $this->sendResponse(null, "User not authenticated.");
+        }
+
         $redisKey = 'user:' . $user->id;
         $cachedUser = Cache::get($redisKey);
 
@@ -137,9 +143,13 @@ class AuthController extends BaseController
      *     )
      * )
      */
-    public function logout()
+    public function logout() : JsonResponse
     {
-        Cache::forget('user:' . auth()->user()->id);
+        $user = auth()->user();
+        if (!$user) {
+            return $this->sendResponse(null, "User not authenticated.");
+        }
+        Cache::forget('user:' . $user->id);
         auth()->logout();
 
         return $this->sendResponse([], 'Successfully logged out.');
@@ -162,14 +172,17 @@ class AuthController extends BaseController
      *     )
      * )
      */
-    public function refresh()
+    public function refresh() : JsonResponse
     {
-        Cache::forget('user:' . auth()->user()->id);
         $user = auth()->user();
+        if (!$user) {
+            return $this->sendResponse(null, "User not authenticated.");
+        }
+        Cache::forget('user:' . $user->id);
         $redisKey = 'user:' . $user->id;
         Cache::set($redisKey, json_encode($user));
 
-        $success = $this->respondWithToken(auth()->refresh());
+        $success = $this->respondWithToken((string)auth()->refresh());
 
         return $this->sendResponse($success, 'Refresh token return successfully.');
     }
@@ -178,15 +191,15 @@ class AuthController extends BaseController
      * Get the token array structure.
      *
      * @param  string $token
-     *
-     * @return \Illuminate\Http\JsonResponse
+     * 
+     * @return array<string, string|int>
      */
-    protected function respondWithToken($token)
+    protected function respondWithToken(string $token) : array
     {
         return [
             'access_token' => $token,
             'token_type' => 'bearer',
-            'expires_in' => auth()->factory()->getTTL() * 60
+            'expires_in' => 3600
         ];
     }
 }

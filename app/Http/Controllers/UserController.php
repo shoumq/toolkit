@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\API\BaseController;
 use App\Models\User;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 
@@ -52,7 +53,7 @@ class UserController extends BaseController
      *     )
      * )
      */
-    public function all()
+    public function all() : JsonResponse
     {
         return response()->json(User::all());
     }
@@ -79,7 +80,7 @@ class UserController extends BaseController
      *     )
      * )
      */
-    public function delete($id)
+    public function delete(int $id) : JsonResponse
     {
         $client = User::findOrFail($id);
         $client->delete();
@@ -120,7 +121,7 @@ class UserController extends BaseController
      *     )
      * )
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, int $id) : JsonResponse
     {
         $client = User::findOrFail($id);
         $client->update($request->all());

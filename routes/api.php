@@ -19,12 +19,11 @@ Route::group([
 Route::get('/user', [UserController::class, 'all'])->middleware('auth:api');
 Route::get('/declaration', [DeclarationController::class, 'all'])->middleware('auth:api');
 
-Route::post('/declaration', [DeclarationController::class, 'create']);
+Route::post('/declaration', [DeclarationController::class, 'create'])->name('declaration.create');
 
 Route::group(['middleware' => 'admin',], function ($router) {
-    Route::delete('/declaration/{id}', [DeclarationController::class, 'delete']);
-    // Route::get('/q', [DeclarationController::class, 'q']);
-    Route::patch('/declaration/{id}', [DeclarationController::class, 'update']);
-    Route::delete('/user/{id}', [UserController::class, 'delete']);
-    Route::patch('/user/{id}', [UserController::class, 'update']);
+    Route::delete('/declaration/{id}', [DeclarationController::class, 'delete'])->name('declaration.delete');
+    Route::patch('/declaration/{id}', [DeclarationController::class, 'update'])->name('declaration.update');
+    Route::delete('/user/{id}', [UserController::class, 'delete'])->name('user.delete');
+    Route::patch('/user/{id}', [UserController::class, 'update'])->name('user.update');
 });

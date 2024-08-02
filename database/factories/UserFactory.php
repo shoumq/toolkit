@@ -45,7 +45,7 @@ class UserFactory extends Factory
         ]);
     }
 
-    private function generatePhoneNumber()
+    private function generatePhoneNumber() : string
     {
         return '8' . $this->faker->numerify('##########');
     }

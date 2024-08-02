@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\API\BaseController;
 use App\Models\Declaration;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 
@@ -39,7 +40,7 @@ class DeclarationController extends BaseController
      *     )
      * )
      */
-    public function all()
+    public function all() : JsonResponse
     {
         return response()->json(Declaration::all());
     }
@@ -66,7 +67,7 @@ class DeclarationController extends BaseController
      *     )
      * )
      */
-    public function create(Request $request)
+    public function create(Request $request) : JsonResponse
     {
         $request->validate([
             'title' => ['string', 'required']
@@ -103,7 +104,7 @@ class DeclarationController extends BaseController
      *     )
      * )
      */
-    public function delete($id)
+    public function delete(int $id) : JsonResponse
     {
         $declaration = Declaration::findOrFail($id);
         $declaration->delete();
@@ -141,13 +142,16 @@ class DeclarationController extends BaseController
      *     )
      * )
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, int $id) : JsonResponse
     {
         $declaration = Declaration::findOrFail($id);
-        $declaration->update($request->all());
+    
+        $data = $request->except('date');
+        
+        $declaration->update($data);
 
         Cache::put("declaration:{$id}", $declaration);
-
+        
         return response()->json(['message' => 'Declaration updated successfully.', 'declaration' => $declaration]);
     }
 }

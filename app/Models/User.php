@@ -10,7 +10,7 @@ use PHPOpenSourceSaver\JWTAuth\Contracts\JWTSubject;
  
 class User extends Authenticatable implements JWTSubject
 {
-    use HasFactory, Notifiable;
+    use HasFactory, Notifiable; // @phpstan-ignore-line
  
     /**
      * The attributes that are mass assignable.
@@ -54,7 +54,7 @@ class User extends Authenticatable implements JWTSubject
      *
      * @return mixed
      */
-    public function getJWTIdentifier()
+    public function getJWTIdentifier() : mixed
     {
         return $this->getKey();
     }
@@ -62,9 +62,9 @@ class User extends Authenticatable implements JWTSubject
     /**
      * Return a key value array, containing any custom claims to be added to the JWT.
      *
-     * @return array
+     * @return mixed
      */
-    public function getJWTCustomClaims()
+    public function getJWTCustomClaims() : mixed
     {
         return [];
     }
