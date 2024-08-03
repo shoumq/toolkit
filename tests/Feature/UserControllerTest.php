@@ -36,7 +36,7 @@ class UserControllerTest extends TestCase
 
         $updatedData = [
             'name' => 'Updated Name',
-            'email' => 'updated31@example.com',
+            'email' => 'updated311@example.com',
         ];
 
         $response = $this->patchJson(route('user.update', $user->id), $updatedData);
