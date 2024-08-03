@@ -4,8 +4,6 @@ namespace Tests\Feature;
 
 use App\Models\Declaration;
 use App\Models\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Cache;
 use Tests\TestCase;
 
@@ -25,7 +23,7 @@ class DeclarationControllerTest extends TestCase
         if (!$declaration) {
             return;
         }
-        
+
         $redisKey = 'declaration:' . $declaration->id;
 
         if (!Cache::has($redisKey)) {
@@ -47,6 +45,7 @@ class DeclarationControllerTest extends TestCase
     }
 
 
+
     public function test_delete_declaration() : void
     {
         $admin = User::factory()->create(['is_admin' => true]);
@@ -54,7 +53,7 @@ class DeclarationControllerTest extends TestCase
 
         $declaration = Declaration::create(['title' => 'Test Declaration']);
 
-        $this->assertDatabaseHas('declarations', ['id' => $declaration->id]);
+        $this->assertDatabaseHas('declarations', ['id' => $declaration->id]);   
 
         Cache::put("declaration:" . $declaration->id, json_encode($declaration));
 
