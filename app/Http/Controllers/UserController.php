@@ -36,7 +36,7 @@ class UserController extends BaseController
      *          type="array",
      *               @OA\Items(
      *                 @OA\Property(property="id", type="number", example="1"),
-     *                 @OA\Property(property="name", type="string", example="Самса"),
+     *                 @OA\Property(property="name", type="string", example="Андрей"),
      *                 @OA\Property(property="email_verified_at", type="time", example="2023-07-06T08:27:30.000000Z"),
      *                 @OA\Property(property="created_at", type="time", example="2023-07-06T08:27:30.000000Z"),
      *                 @OA\Property(property="updated_at", type="time", example="2023-07-06T09:45:07.000000Z"),
@@ -82,12 +82,7 @@ class UserController extends BaseController
      */
     public function delete(int $id) : JsonResponse
     {
-        $client = User::findOrFail($id);
-        $client->delete();
-
-        Cache::forget("user:{$id}");
-
-        return response()->json(['message' => 'Client deleted successfully.']);
+        return User::remove($id);
     }
 
     /**
@@ -123,11 +118,6 @@ class UserController extends BaseController
      */
     public function update(Request $request, int $id) : JsonResponse
     {
-        $client = User::findOrFail($id);
-        $client->update($request->all());
-
-        Cache::put("user:{$id}", $client);
-
-        return response()->json(['message' => 'Client updated successfully.', 'client' => $client]);
+        return User::modify($request, $id);
     }
 }

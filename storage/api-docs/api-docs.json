@@ -377,7 +377,7 @@
                                             },
                                             "name": {
                                                 "type": "string",
-                                                "example": "Самса"
+                                                "example": "Андрей"
                                             },
                                             "email_verified_at": {
                                                 "type": "time",
